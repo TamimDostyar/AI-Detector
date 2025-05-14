@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Environment and virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+data/
+
+# Docker
+.dockerignore
+
+# Log files
+*.log
+
+# Data files (if they're too large or sensitive)
+# Uncomment if needed
+# data/*.csv
+# data/*.json
+
+# Model files (if they're too large)
+# Uncomment if needed
+# models/*.h5
+# models/*.pkl
+
+# OS specific files
+.DS_Store
+Thumbs.db
