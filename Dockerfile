@@ -26,4 +26,4 @@ EXPOSE 5000
 ENV PYTHONUNBUFFERED=1
 
 # Start Flask app
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "app:app"]

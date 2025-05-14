@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Text Detector</title>
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
     <style>
+        .hero.is-primary {
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+        }
+        
         .loading-spinner {
             display: none;
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            border-top: 4px solid #3B82F6;
+            border-top: 4px solid #4a00e0;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
@@ -27,264 +33,408 @@
         
         .result-card {
             display: none;
-            overflow: hidden;
             transition: all 0.3s ease;
         }
         
-        .human-result {
-            border-left: 6px solid #10B981;
+        .file-drop-area {
+            border: 2px dashed #dbdbdb;
+            border-radius: 6px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
         }
         
-        .ai-result {
-            border-left: 6px solid #EF4444;
+        .file-drop-area:hover, .file-drop-area.is-dragover {
+            background-color: #f5f5f5;
+            border-color: #b5b5b5;
         }
         
-        .progress-bar {
-            height: 8px;
-            border-radius: 4px;
-            background-color: #E5E7EB;
+        .progress-container {
+            height: 40px;
+            border-radius: 6px;
             overflow: hidden;
+            position: relative;
+            background: #f5f5f5;
         }
         
-        .progress-fill-human {
+        .progress-human {
+            background: linear-gradient(90deg, #00d1b2, #00c4a7);
             height: 100%;
-            background-color: #10B981;
-            transition: width 0.5s ease-out;
+            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            position: absolute;
+            left: 0;
         }
         
-        .progress-fill-ai {
+        .progress-ai {
+            background: linear-gradient(90deg, #ff3860, #f14668);
             height: 100%;
-            background-color: #EF4444;
-            transition: width 0.5s ease-out;
+            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            position: absolute;
+            right: 0;
+        }
+        
+        .confidence-labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            font-weight: bold;
+            z-index: 1;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .is-human .result-icon {
+            color: #00d1b2;
+        }
+        
+        .is-ai .result-icon {
+            color: #f14668;
+        }
+        
+        .text-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            border-left: 4px solid #dbdbdb;
+            padding-left: 1rem;
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.5s;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-animation {
+            width: 100%;
+            height: 300px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            cursor: text;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 20px;
+            background-color: #363636;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .typing-area {
+            padding: 1rem;
+            height: 100%;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .example-buttons button {
+            transition: all 0.3s;
+        }
+
+        .box {
+            transition: all 0.3s;
+        }
+
+        .box:hover {
+            box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.2), 0 0 0 1px rgba(10, 10, 10, 0.02);
+            transform: translateY(-2px);
+        }
+
+        .tag.is-human {
+            background-color: #00d1b2;
+            color: white;
+        }
+
+        .tag.is-ai {
+            background-color: #f14668;
+            color: white;
+        }
+
+        .navbar-item img {
+            max-height: 40px;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <header class="text-center mb-10">
-            <div class="flex justify-end mb-2">
-                <a href="/about" class="text-blue-600 hover:text-blue-800 flex items-center">
-                    <i class="fas fa-info-circle mr-1"></i> About
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <span class="icon is-large mr-2">
+                    <i class="fas fa-robot"></i>
+                </span>
+                <span class="has-text-weight-bold is-size-4">AI Text Detector</span>
+            </a>
+            
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/about">
+                    <span class="icon">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
+                    <span>About</span>
                 </a>
             </div>
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Text Detector</h1>
-            <p class="text-gray-600">Upload a text file or paste content to analyze whether it was written by a human or AI</p>
-        </header>
-        
-        <main>
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <div class="mb-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Input Text</h2>
-                    
-                    <div class="mb-4">
-                        <label for="textInput" class="block text-gray-700 mb-2">Paste your text here:</label>
-                        <textarea id="textInput" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="8" placeholder="Enter text to analyze..."></textarea>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-gray-700 mb-2">Or upload a text file:</label>
-                        <div class="flex items-center justify-center w-full">
-                            <label class="flex flex-col w-full h-24 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 cursor-pointer">
-                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                                    <p class="text-sm text-gray-500">
-                                        <span class="font-semibold">Click to upload</span> or drag and drop
-                                    </p>
-                                    <p class="text-xs text-gray-500">TXT, PDF, DOCX, or other text files</p>
-                                </div>
-                                <input id="fileInput" type="file" class="hidden" accept=".txt,.pdf,.docx,.doc,.rtf" />
-                            </label>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title is-2">
+                    <i class="fas fa-robot mr-2"></i>AI Text Detector
+                </h1>
+                <h2 class="subtitle">
+                    Analyze text to determine if it was written by a human or AI
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Tabs -->
+            <div class="tabs is-centered is-boxed">
+                <ul id="input-tabs">
+                    <li class="is-active" data-tab="paste-text">
+                        <a>
+                            <span class="icon"><i class="fas fa-paste"></i></span>
+                            <span>Paste Text</span>
+                        </a>
+                    </li>
+                    <li data-tab="try-examples">
+                        <a>
+                            <span class="icon"><i class="fas fa-lightbulb"></i></span>
+                            <span>Try Examples</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Paste Text Tab -->
+                <div id="paste-text" class="tab-pane is-active">
+                    <div class="box">
+                        <div class="field">
+                            <label class="label">Enter your text to analyze:</label>
+                            <div class="control">
+                                <textarea id="textInput" class="textarea" rows="10" placeholder="Type or paste text here to analyze whether it was written by a human or AI... For better outcome provide an essay between 1000 - 5000 words"></textarea>
+                            </div>
+                            <p class="help">For better outcome provide an essay between 1000 - 5000 words</p>
                         </div>
-                        <p id="fileName" class="mt-2 text-sm text-gray-500"></p>
+                        
+                        <div class="field">
+                            <div class="control">
+                                <button id="clearTextBtn" class="button is-light">
+                                    <span class="icon">
+                                        <i class="fas fa-eraser"></i>
+                                    </span>
+                                    <span>Clear</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Examples Tab -->
+                <div id="try-examples" class="tab-pane" style="display: none;">
+                    <div class="box">
+                        <h3 class="title is-5">Try these sample texts:</h3>
+                        <div class="example-buttons buttons">
+                            <button class="button is-info example-button" data-example="human">
+                                <span class="icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span>Human Essay Example</span>
+                            </button>
+                            <button class="button is-danger example-button" data-example="ai">
+                                <span class="icon">
+                                    <i class="fas fa-robot"></i>
+                                </span>
+                                <span>AI Generated Example</span>
+                            </button>
+                            <button class="button is-warning example-button" data-example="mixed">
+                                <span class="icon">
+                                    <i class="fas fa-random"></i>
+                                </span>
+                                <span>Mixed Content Example</span>
+                            </button>
+                        </div>
+                        <div class="notification is-light mt-4">
+                            <p>
+                                Examples help you see how the detector works with different types of content.
+                                Click any button above to load sample text, then analyze it!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyze Button -->
+            <div class="has-text-centered my-5">
+                <button id="analyzeBtn" class="button is-primary is-large">
+                    <span class="icon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <span>Analyze Text</span>
+                </button>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="has-text-centered">
+                <div id="loadingSpinner" class="loading-spinner"></div>
+                <p id="loadingText" class="is-hidden has-text-grey">Analyzing text...</p>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultCard" class="result-card mt-6">
+                <div class="box">
+                    <h3 class="title is-4 has-text-centered mb-5">Analysis Results</h3>
                     
-                    <div class="flex justify-center">
-                        <button id="analyzeBtn" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md transition-all duration-200">
-                            <i class="fas fa-search-plus mr-2"></i>Analyze Text
-                        </button>
+                    <div class="columns is-centered">
+                        <div class="column is-8">
+                            <!-- Result heading -->
+                            <div class="has-text-centered mb-5" id="resultContent">
+                                <div class="result-icon">
+                                    <i class="fas fa-question-circle"></i>
+                                </div>
+                                <h3 id="resultTitle" class="title is-3"></h3>
+                                <p id="resultMessage" class="subtitle is-5 mb-3"></p>
+                                <p id="resultTimestamp" class="is-size-7 has-text-grey"></p>
+                            </div>
+                            
+                            <!-- Progress bar -->
+                            <div class="mb-5">
+                                <p class="has-text-weight-bold mb-2">Confidence Score:</p>
+                                <div class="progress-container">
+                                    <div class="confidence-labels">
+                                        <span id="humanLabel">Human</span>
+                                        <span id="aiLabel">AI</span>
+                                    </div>
+                                    <div id="humanProgress" class="progress-human"></div>
+                                    <div id="aiProgress" class="progress-ai"></div>
+                                </div>
+                                <div class="level mt-2">
+                                    <div class="level-left">
+                                        <span id="humanPercent" class="tag is-human"></span>
+                                    </div>
+                                    <div class="level-right">
+                                        <span id="aiPercent" class="tag is-ai"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Text preview -->
+                            <div class="mt-5">
+                                <h4 class="title is-6">Text Preview:</h4>
+                                <div class="text-preview p-3 is-size-7" id="textPreview"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div id="loadingSpinner" class="loading-spinner"></div>
-            
-            <div id="resultCard" class="result-card bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis Result</h2>
-                
-                <div class="flex items-center mb-4">
-                    <div id="resultIcon" class="text-3xl mr-3"></div>
-                    <div>
-                        <h3 id="resultTitle" class="text-lg font-bold"></h3>
-                        <p id="resultConfidence" class="text-sm text-gray-600"></p>
-                    </div>
-                </div>
-                
+        </div>
+    </section>
+
+    <!-- Engineer Callout Section -->
+    <section class="section has-background-light">
+        <div class="container">
+            <div class="box has-text-centered py-5">
                 <div class="mb-4">
-                    <div class="flex justify-between text-sm text-gray-600 mb-1">
-                        <span>Human</span>
-                        <span>AI</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div id="progressFill" class=""></div>
-                    </div>
+                    <span class="icon is-large has-text-primary">
+                        <i class="fas fa-user-cog fa-2x"></i>
+                    </span>
                 </div>
-                
-                <div class="mt-6 p-4 bg-gray-50 rounded-md">
-                    <h4 class="text-sm font-medium text-gray-700 mb-2">Text Preview:</h4>
-                    <p id="textPreview" class="text-sm text-gray-800 italic"></p>
-                </div>
+                <h3 class="title is-4 mb-4">Meet the Engineer Behind This Project</h3>
+                <p class="subtitle is-6 mb-5">
+                    Discover more about Tamim Dostyar, the developer of this AI text detector and founder of VantixAI
+                </p>
+                <a href="/about#engineer-section" class="button is-primary is-medium">
+                    <span class="icon">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
+                    <span>Learn about the Engineer</span>
+                </a>
             </div>
-        </main>
-        
-        <footer class="mt-12 text-center text-gray-500 text-sm">
-            <p>© 2023 AI Text Detector | Built with advanced ML models</p>
-        </footer>
-    </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>AI Text Detector built by Tamim Dostyar</strong>.
+                Built with advanced machine learning models.
+            </p>
+            <p class="is-size-7">
+                © 2025 AI Text Detector | All rights reserved
+            </p>
+        </div>
+    </footer>
     
+    <!-- Custom JavaScript -->
+    <script src="/static/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const textInput = document.getElementById('textInput');
-            const fileInput = document.getElementById('fileInput');
-            const fileName = document.getElementById('fileName');
-            const analyzeBtn = document.getElementById('analyzeBtn');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const resultCard = document.getElementById('resultCard');
-            const resultIcon = document.getElementById('resultIcon');
-            const resultTitle = document.getElementById('resultTitle');
-            const resultConfidence = document.getElementById('resultConfidence');
-            const progressFill = document.getElementById('progressFill');
-            const textPreview = document.getElementById('textPreview');
-            
-            // Handle file selection
-            fileInput.addEventListener('change', function(e) {
-                if (fileInput.files.length > 0) {
-                    fileName.textContent = 'Selected file: ' + fileInput.files[0].name;
-                    textInput.value = ''; // Clear textarea when file is selected
-                }
-            });
-            
-            // Handle drag and drop
-            const dropArea = fileInput.parentElement;
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function highlight() {
-                dropArea.classList.add('border-blue-400', 'bg-blue-50');
-            }
-            
-            function unhighlight() {
-                dropArea.classList.remove('border-blue-400', 'bg-blue-50');
-            }
-            
-            dropArea.addEventListener('drop', handleDrop, false);
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                
-                if (files.length > 0) {
-                    fileInput.files = files;
-                    fileName.textContent = 'Selected file: ' + files[0].name;
-                    textInput.value = ''; // Clear textarea when file is dropped
-                }
-            }
-            
-            // Handle text input
-            textInput.addEventListener('input', function() {
-                if (textInput.value.trim() !== '') {
-                    fileInput.value = ''; // Clear file input when text is entered
-                    fileName.textContent = '';
-                }
-            });
-            
-            // Handle analysis button click
-            analyzeBtn.addEventListener('click', function() {
-                // Validate input
-                if (textInput.value.trim() === '' && (!fileInput.files || fileInput.files.length === 0)) {
-                    alert('Please enter text or upload a file to analyze.');
-                    return;
-                }
-                
-                // Show loading spinner
-                loadingSpinner.style.display = 'block';
-                resultCard.style.display = 'none';
-                
-                // Create form data
-                const formData = new FormData();
-                
-                if (textInput.value.trim() !== '') {
-                    formData.append('text', textInput.value);
-                } else if (fileInput.files && fileInput.files.length > 0) {
-                    formData.append('file', fileInput.files[0]);
-                }
-                
-                // Send request to server
-                fetch('/classify', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Hide loading spinner
-                    loadingSpinner.style.display = 'none';
-                    
-                    if (data.error) {
-                        alert('Error: ' + data.error);
-                        return;
-                    }
-                    
-                    // Update result card
-                    const result = data.result;
-                    const confidence = data.confidence;
-                    
-                    if (result === 'Human') {
-                        resultIcon.innerHTML = '<i class="fas fa-user text-green-500"></i>';
-                        resultCard.classList.add('human-result');
-                        resultCard.classList.remove('ai-result');
-                        progressFill.className = 'progress-fill-human';
-                        progressFill.style.width = confidence + '%';
-                    } else {
-                        resultIcon.innerHTML = '<i class="fas fa-robot text-red-500"></i>';
-                        resultCard.classList.add('ai-result');
-                        resultCard.classList.remove('human-result');
-                        progressFill.className = 'progress-fill-ai';
-                        progressFill.style.width = (100 - confidence) + '%';
-                    }
-                    
-                    resultTitle.textContent = result + ' Generated Text';
-                    resultConfidence.textContent = 'Confidence: ' + confidence + '%';
-                    textPreview.textContent = data.text_preview;
-                    
-                    // Show result card with animation
-                    resultCard.style.display = 'block';
-                    resultCard.style.opacity = '0';
-                    resultCard.style.transform = 'translateY(20px)';
+            // Animate the engineer callout section
+            const engineerSection = document.querySelector('.section.has-background-light');
+            if (engineerSection) {
+                setTimeout(() => {
+                    engineerSection.style.opacity = '0';
+                    engineerSection.style.transform = 'translateY(20px)';
                     
                     setTimeout(() => {
-                        resultCard.style.opacity = '1';
-                        resultCard.style.transform = 'translateY(0)';
-                    }, 10);
-                })
-                .catch(error => {
-                    loadingSpinner.style.display = 'none';
-                    alert('Error: ' + error.message);
-                });
-            });
+                        engineerSection.style.transition = 'all 1s ease-out';
+                        engineerSection.style.opacity = '1';
+                        engineerSection.style.transform = 'translateY(0)';
+                    }, 500);
+                }, 0);
+            }
+            
+            // Make the button pulse after a delay
+            const engineerButton = document.querySelector('.section.has-background-light .button');
+            if (engineerButton) {
+                setTimeout(() => {
+                    engineerButton.classList.add('pulse');
+                }, 3000);
+            }
         });
     </script>
 </body>

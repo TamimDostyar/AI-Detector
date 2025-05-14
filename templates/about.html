@@ -4,133 +4,344 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - AI Text Detector</title>
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- KaTeX for math equations -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-</head>
-<body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <header class="mb-10">
-            <nav class="flex items-center justify-between mb-8">
-                <a href="/" class="text-blue-600 hover:text-blue-800 flex items-center">
-                    <i class="fas fa-chevron-left mr-2"></i> Back to Detector
-                </a>
-            </nav>
-            <h1 class="text-4xl font-bold text-gray-800 mb-2 text-center">About Our AI Text Detector</h1>
-            <p class="text-gray-600 text-center">Understanding how our model works and how to interpret results</p>
-        </header>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <style>
+        .card {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+        }
         
-        <main>
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Our Approach</h2>
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .model-card {
+            height: 100%;
+        }
+        
+        .model-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .equation-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-link:hover {
+            transform: translateX(-3px);
+        }
+        
+        .back-link {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <span class="icon is-large mr-2">
+                    <i class="fas fa-robot"></i>
+                </span>
+                <span class="has-text-weight-bold is-size-4">AI Text Detector</span>
+            </a>
+            
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item is-active" href="/about">
+                    <span class="icon">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
+                    <span>About</span>
+                </a>
+                <a class="navbar-item" href="#engineer-section">
+                    <span class="icon">
+                        <i class="fas fa-user-cog"></i>
+                    </span>
+                    <span>About Engineer</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title is-2">
+                    <i class="fas fa-info-circle mr-2"></i>About Our AI Text Detector
+                </h1>
+                <h2 class="subtitle">
+                    Understanding how our model works and how to interpret results
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="mb-5">
+                <a href="/" class="back-link button is-light">
+                    <span class="icon">
+                        <i class="fas fa-chevron-left"></i>
+                    </span>
+                    <span>Back to Detector</span>
+                </a>
+            </div>
+            
+            <div class="box">
+                <h2 class="title is-3 mb-6">Our Approach</h2>
                 
-                <div class="mb-10">
-                    <h3 class="text-xl font-medium text-gray-700 mb-3">Hybrid Detection Model</h3>
-                    <p class="text-gray-700 mb-4">
+                <div class="mb-6">
+                    <h3 class="title is-4 mb-4">Hybrid Detection Model</h3>
+                    <p class="mb-4">
                         Our AI text detector uses a hybrid approach that combines two powerful machine learning models:
                     </p>
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-blue-50 p-4 rounded-lg">
-                            <h4 class="font-medium text-blue-800 mb-2">
-                                <i class="fas fa-calculator mr-2"></i>Statistical Model
-                            </h4>
-                            <p class="text-gray-700">
-                                Uses TF-IDF (Term Frequency-Inverse Document Frequency) features to analyze word patterns and frequencies that distinguish human vs. AI writing. This captures linguistic nuances and stylistic patterns.
-                            </p>
+                    
+                    <div class="columns mb-5">
+                        <div class="column">
+                            <div class="card model-card has-background-info-light">
+                                <div class="card-content">
+                                    <div class="has-text-centered mb-4">
+                                        <span class="icon model-icon has-text-info">
+                                            <i class="fas fa-calculator"></i>
+                                        </span>
+                                    </div>
+                                    <p class="title is-5 has-text-centered mb-4">Statistical Model</p>
+                                    <div class="content">
+                                        <p>
+                                            Uses TF-IDF (Term Frequency-Inverse Document Frequency) features to analyze word patterns and frequencies that distinguish human vs. AI writing. This captures linguistic nuances and stylistic patterns.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="bg-indigo-50 p-4 rounded-lg">
-                            <h4 class="font-medium text-indigo-800 mb-2">
-                                <i class="fas fa-brain mr-2"></i>Deep Learning Model
-                            </h4>
-                            <p class="text-gray-700">
-                                A neural network trained on sequence data to capture deeper contextual patterns in text. This model understands sentence structures and longer-range dependencies in the text.
-                            </p>
+                        
+                        <div class="column">
+                            <div class="card model-card has-background-primary-light">
+                                <div class="card-content">
+                                    <div class="has-text-centered mb-4">
+                                        <span class="icon model-icon has-text-primary">
+                                            <i class="fas fa-brain"></i>
+                                        </span>
+                                    </div>
+                                    <p class="title is-5 has-text-centered mb-4">Deep Learning Model</p>
+                                    <div class="content">
+                                        <p>
+                                            A neural network trained on sequence data to capture deeper contextual patterns in text. This model understands sentence structures and longer-range dependencies in the text.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="mb-10">
-                    <h3 class="text-xl font-medium text-gray-700 mb-3">Training Data</h3>
-                    <p class="text-gray-700 mb-4">
+                
+                <div class="mb-6">
+                    <h3 class="title is-4 mb-4">Training Data</h3>
+                    <p class="mb-4">
                         Our models were trained on a diverse dataset containing:
                     </p>
-                    <ul class="list-disc pl-6 text-gray-700 mb-4">
-                        <li>Human-written essays and articles from various sources and domains</li>
-                        <li>AI-generated text from different large language models (LLMs)</li>
-                        <li>Various writing styles, topics, and complexity levels</li>
-                    </ul>
-                    <p class="text-gray-700">
+                    <div class="content">
+                        <ul>
+                            <li>Human-written essays and articles from various sources and domains</li>
+                            <li>AI-generated text from different large language models (LLMs)</li>
+                            <li>Various writing styles, topics, and complexity levels</li>
+                        </ul>
+                    </div>
+                    <p>
                         Both models were trained to distinguish patterns unique to AI generation versus human writing, considering factors like repetition, coherence, complexity, and stylistic markers.
                     </p>
                 </div>
-
-                <div class="mb-10">
-                    <h3 class="text-xl font-medium text-gray-700 mb-3">How to Interpret Results</h3>
-                    <p class="text-gray-700 mb-4">
+                
+                <div class="mb-6">
+                    <h3 class="title is-4 mb-4">How to Interpret Results</h3>
+                    <p class="mb-4">
                         When you analyze text with our detector, we calculate two separate probabilities:
                     </p>
                     
-                    <div class="bg-gray-50 p-5 rounded-lg mb-6">
-                        <h4 class="font-medium text-gray-800 mb-2">Calculation Method:</h4>
-                        <ol class="list-decimal pl-6 text-gray-700 mb-4">
-                            <li>The statistical model produces a probability (<span class="italic">stat_p_human</span>) that the text was written by a human</li>
-                            <li>The deep learning model produces its own probability (<span class="italic">dl_p_human</span>) that the text was human-written</li>
-                            <li>We average these two probabilities to get a final human probability score:</li>
-                        </ol>
+                    <div class="notification is-light mb-5">
+                        <h4 class="title is-5 mb-3">Calculation Method:</h4>
+                        <div class="content">
+                            <ol>
+                                <li>The statistical model produces a probability (<em>stat_p_human</em>) that the text was written by a human</li>
+                                <li>The deep learning model produces its own probability (<em>dl_p_human</em>) that the text was human-written</li>
+                                <li>We average these two probabilities to get a final human probability score:</li>
+                            </ol>
+                        </div>
                         
-                        <div class="text-center bg-white p-3 rounded border border-gray-200 mb-4" id="equation">
+                        <div class="equation-box has-text-centered mb-4" id="equation">
                             p_human = (stat_p_human + dl_p_human) / 2
                         </div>
                         
-                        <p class="text-gray-700 mb-2">Then we apply a decision rule:</p>
-                        <ul class="pl-6 text-gray-700">
-                            <li>If <span class="italic">p_human</span> > 0.5, we classify the text as "Human" with confidence <span class="italic">p_human</span></li>
-                            <li>Otherwise, we classify it as "AI" with confidence 1 - <span class="italic">p_human</span></li>
-                        </ul>
+                        <p class="mb-2">Then we apply a decision rule:</p>
+                        <div class="content">
+                            <ul>
+                                <li>If <em>p_human</em> > 0.5, we classify the text as "Human" with confidence <em>p_human</em></li>
+                                <li>Otherwise, we classify it as "AI" with confidence 1 - <em>p_human</em></li>
+                            </ul>
+                        </div>
                     </div>
                     
-                    <div class="bg-yellow-50 p-5 rounded-lg">
-                        <h4 class="font-medium text-yellow-800 mb-2">
-                            <i class="fas fa-lightbulb mr-2"></i>Reading the Results
+                    <div class="notification is-warning is-light">
+                        <h4 class="title is-5 mb-3">
+                            <span class="icon mr-2">
+                                <i class="fas fa-lightbulb"></i>
+                            </span>
+                            Reading the Results
                         </h4>
-                        <p class="text-gray-700 mb-3">
+                        <p class="mb-3">
                             When our detector shows "50% human", it literally means our model estimates a 50% probability that the text was written by a human. The remaining 50% represents the probability it was AI-generated.
                         </p>
-                        <p class="text-gray-700 mb-3">
-                            <span class="font-medium">Example:</span> If our detector shows "75% human", it means:
+                        <p class="mb-3">
+                            <strong>Example:</strong> If our detector shows "75% human", it means:
                         </p>
-                        <ul class="list-disc pl-6 text-gray-700">
-                            <li>75% confidence the text was written by a human</li>
-                            <li>25% confidence the text was AI-generated</li>
+                        <div class="content">
+                            <ul>
+                                <li>75% confidence the text was written by a human</li>
+                                <li>25% confidence the text was AI-generated</li>
+                            </ul>
+                        </div>
+                        <div class="notification is-info is-light mt-4">
+                            <p class="mb-2"><strong>Confidence Thresholds:</strong></p>
+                            <ul>
+                                <li><strong>70-100% human:</strong> Text is likely fully human-written</li>
+                                <li><strong>Below 70% human:</strong> Text may be AI-generated, mixed content, or human text revised by AI</li>
+                            </ul>
+                            <p class="mt-3 is-italic">
+                                Higher human confidence scores (above 70%) strongly indicate authentic human writing, while lower scores suggest some level of AI involvement in the text creation or editing process.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="title is-4 mb-4">Limitations</h3>
+                    <p class="mb-4">
+                        While our detector is powerful, it's important to understand its limitations:
+                    </p>
+                    <div class="content">
+                        <ul>
+                            <li>No AI detector is 100% accurate; false positives and negatives can occur</li>
+                            <li>Results may vary depending on the AI model used to generate text</li>
+                            <li>Heavily edited AI-generated text or hybrid human-AI content may be harder to detect</li>
+                            <li>Very short texts provide less data for accurate analysis</li>
+                            <li>The detector is continuously improving as we gather more data and refine our models</li>
                         </ul>
                     </div>
                 </div>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-medium text-gray-700 mb-3">Limitations</h3>
-                    <p class="text-gray-700 mb-4">
-                        While our detector is powerful, it's important to understand its limitations:
-                    </p>
-                    <ul class="list-disc pl-6 text-gray-700">
-                        <li>No AI detector is 100% accurate; false positives and negatives can occur</li>
-                        <li>Results may vary depending on the AI model used to generate text</li>
-                        <li>Heavily edited AI-generated text or hybrid human-AI content may be harder to detect</li>
-                        <li>Very short texts provide less data for accurate analysis</li>
-                        <li>The detector is continuously improving as we gather more data and refine our models</li>
-                    </ul>
+            </div>
+            
+            <div class="box mt-6" id="engineer-section">
+                <h2 class="title is-3 mb-6">About the Engineer</h2>
+                
+                <div class="columns">
+                    <div class="column is-4">
+                        <figure class="image">
+                            <img src="/static/Tamim.jpg" alt="Tamim Dostyar" class="is-rounded" style="max-width: 250px; margin: 0 auto;">
+                        </figure>
+                        <div class="has-text-centered mt-4">
+                            <div class="tags is-centered">
+                                <span class="tag is-primary">Developer</span>
+                                <span class="tag is-info">Mayo Clinic Intern</span>
+                                <span class="tag is-dark">Microsoft</span>
+                                <span class="tag is-success">VantixAI</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="content">
+                            <h3 class="title is-4">Tamim Dostyar</h3>
+                            <p class="mb-4">
+                                My name is Tamim, and I am the founder of VantixAI—a project dedicated to making real-world AI applications freely accessible to users anywhere in the world. My only goal is to create smart real-world applications that can help people.
+                            </p>
+                            <p class="mb-4">
+                                As a computer science student, I will be interning at the Mayo Clinic in Rochester, MN, this summer of 2025. I am in my last month of work at Microsoft as a student developer, gaining hands-on experience in real-world problem-solving. I enjoy coding and making meaningful programs.
+                            </p>
+                            <p>
+                                If you have any questions or any business inquiries, please reach out to me via email at 
+                                <a href="mailto:a.tamimdostyar@gmail.com">a.tamimdostyar@gmail.com</a>.
+                            </p>
+                            
+                            <div class="buttons mt-4">
+                                <a href="mailto:a.tamimdostyar@gmail.com" class="button is-primary">
+                                    <span class="icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <span>Contact Me</span>
+                                </a>
+                                <a href="https://github.com/TamimDostyar" target="_blank" class="button is-dark">
+                                    <span class="icon">
+                                        <i class="fab fa-github"></i>
+                                    </span>
+                                    <span>GitHub</span>
+                                </a>
+                                <a href="https://www.linkedin.com/in/tamim-dostyar/" target="_blank" class="button is-info">
+                                    <span class="icon">
+                                        <i class="fab fa-linkedin"></i>
+                                    </span>
+                                    <span>LinkedIn</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification is-light mt-5">
+                    <div class="content">
+                        <h4 class="title is-5">About VantixAI</h4>
+                        <p>
+                            VantixAI develops AI tools that are practical, accessible, and designed with the end-user in mind. From text detection to content generation, our apps bring AI capabilities to everyone, regardless of technical background.
+                        </p>
+                        <p class="has-text-grey is-italic">
+                            "Technology should simplify life, not complicate it."
+                        </p>
+                    </div>
                 </div>
             </div>
-        </main>
-        
-        <footer class="mt-12 text-center text-gray-500 text-sm">
-            <p>© 2023 AI Text Detector | Built with advanced ML models</p>
-        </footer>
-    </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>AI Text Detector</strong> by Tamim Dostyar</a>.
+                Built with advanced machine learning models.
+            </p>
+            <p>
+                <i>
+                Note the model was trained on a small dataset and the results may not be 100% accurate.
+                The goal of this project was to simply practice machine learning classification.
+                </i>
+            </p>
+            <p class="is-size-7">
+                © 2025 AI Text Detector | All rights reserved
+            </p>
+        </div>
+    </footer>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -141,6 +352,86 @@
                     {left: "$", right: "$", display: false}
                 ]
             });
+            
+            // Mobile menu toggle
+            const burger = document.querySelector('.navbar-burger');
+            const menu = document.querySelector('.navbar-menu');
+            
+            burger.addEventListener('click', () => {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+            
+            // Add animations to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.5s ease-out';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100 + (index * 150));
+                }, 0);
+            });
+            
+            // Smooth scroll to engineer section when clicking the menu item
+            document.querySelector('a[href="#engineer-section"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('engineer-section').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Check if URL has engineer section hash and scroll to it
+            if (window.location.hash === '#engineer-section') {
+                setTimeout(() => {
+                    document.getElementById('engineer-section').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Add highlight effect
+                    const engineerSection = document.getElementById('engineer-section');
+                    engineerSection.style.boxShadow = '0 0 0 5px rgba(74, 0, 224, 0.3)';
+                    setTimeout(() => {
+                        engineerSection.style.transition = 'box-shadow 1s ease-out';
+                        engineerSection.style.boxShadow = '0 0 0 0 rgba(74, 0, 224, 0)';
+                    }, 1000);
+                }, 500);
+            }
+            
+            // Animate engineer section when scrolled into view
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target.querySelector('img');
+                        if (img) {
+                            img.style.opacity = '0';
+                            img.style.transform = 'scale(0.8)';
+                            
+                            setTimeout(() => {
+                                img.style.transition = 'all 0.8s ease-out';
+                                img.style.opacity = '1';
+                                img.style.transform = 'scale(1)';
+                            }, 300);
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            const engineerSection = document.getElementById('engineer-section');
+            if (engineerSection) {
+                observer.observe(engineerSection);
+            }
         });
     </script>
 </body>
