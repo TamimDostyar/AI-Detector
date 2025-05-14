@@ -1,6 +1,13 @@
 # AI Text Detector
 
-A tool for detecting whether text was written by AI or humans using machine learning techniques.
+A web application for detecting whether text was written by AI or humans using machine learning models.
+
+## Features
+
+- Paste text or upload files for analysis
+- Advanced ML model combines statistical and deep learning approaches
+- Beautiful, responsive UI for all device sizes
+- Real-time text analysis with confidence scores
 
 ## ⚠️ IMPORTANT: Disk Space Issues Detected
 
@@ -22,7 +29,7 @@ Before trying to build or run this project:
 
 ## Setup
 
-### Using Docker (Recommended)
+### Option 1: Using Docker (Recommended)
 
 1. Install Docker and Docker Compose
 2. Clone this repository
@@ -32,9 +39,9 @@ Before trying to build or run this project:
 docker-compose up
 ```
 
-4. Access Jupyter Lab at http://localhost:8888
+4. Access the web app at http://localhost:5000
 
-### Local Installation
+### Option 2: Local Installation
 
 1. Clone this repository
 2. Install dependencies:
@@ -43,16 +50,43 @@ docker-compose up
 pip install -r requirements.txt
 ```
 
-3. Run Jupyter Lab:
+3. Run the Flask app:
 
 ```bash
-jupyter lab
+python app.py
 ```
+
+4. Access the web app at http://localhost:5000
+
+## How It Works
+
+The AI Text Detector uses a hybrid approach that combines:
+
+1. Statistical ML model using TF-IDF features
+2. Deep learning model based on neural networks
+3. Combined probability scoring for optimal accuracy
 
 ## Project Structure
 
-- `/notebooks`: Jupyter notebooks for exploratory data analysis and model development
-- `/data`: Data storage for datasets 
+- `app.py`: Flask web application 
+- `/templates`: HTML templates for the web interface
+- `/notebooks`: Jupyter notebooks used for model development
+- Model files:
+  - `dl_model.keras`: Deep learning model
+  - `stat_model.joblib`: Statistical model
+  - `tfidf_vectorizer.joblib`: Text vectorizer
+  - `tokenizer.pkl`: Text tokenizer
+
+## Usage
+
+1. Open the web application in your browser
+2. Either paste text into the text area or upload a text file
+3. Click "Analyze Text" to process
+4. View the detection results showing whether the text was likely written by a human or AI
+
+## License
+
+MIT
 
 ## Contributing
 

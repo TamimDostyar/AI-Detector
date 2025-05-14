@@ -1,10 +1,15 @@
 services:
-  jupyter:
+  web:
     build: .
     container_name: ai-text-detector
     ports:
-      - "8888:8888"
+      - "5000:5000"
     volumes:
       - ./notebooks:/app/notebooks
-      - ./data:/app/data
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./app.py:/app/app.py
     restart: unless-stopped
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production

@@ -3,30 +3,27 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install minimal system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 # Copy requirements file
 COPY requirements.txt .
 
-# Install Python dependencies with less complexity
+# Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Create necessary directories
-RUN mkdir -p /app/notebooks /app/data
+RUN mkdir -p /app/templates /app/static
 
-# Copy only necessary files
+# Copy project files and folders
 COPY notebooks /app/notebooks/
-COPY data /app/data/
-COPY README.MD /app/
+COPY templates /app/templates/
+COPY static /app/static/
+COPY app.py /app/
 
-# Expose the Jupyter port
-EXPOSE 8888
+# Expose the Flask port
+EXPOSE 5000
 
-# Start Jupyter
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Start Flask app
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
