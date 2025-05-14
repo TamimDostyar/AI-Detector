@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Detector</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .loading-spinner {
+            display: none;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3B82F6;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-card {
+            display: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .human-result {
+            border-left: 6px solid #10B981;
+        }
+        
+        .ai-result {
+            border-left: 6px solid #EF4444;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #E5E7EB;
+            overflow: hidden;
+        }
+        
+        .progress-fill-human {
+            height: 100%;
+            background-color: #10B981;
+            transition: width 0.5s ease-out;
+        }
+        
+        .progress-fill-ai {
+            height: 100%;
+            background-color: #EF4444;
+            transition: width 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-10">
+            <div class="flex justify-end mb-2">
+                <a href="/about" class="text-blue-600 hover:text-blue-800 flex items-center">
+                    <i class="fas fa-info-circle mr-1"></i> About
+                </a>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">AI Text Detector</h1>
+            <p class="text-gray-600">Upload a text file or paste content to analyze whether it was written by a human or AI</p>
+        </header>
+        
+        <main>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Input Text</h2>
+                    
+                    <div class="mb-4">
+                        <label for="textInput" class="block text-gray-700 mb-2">Paste your text here:</label>
+                        <textarea id="textInput" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="8" placeholder="Enter text to analyze..."></textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Or upload a text file:</label>
+                        <div class="flex items-center justify-center w-full">
+                            <label class="flex flex-col w-full h-24 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 cursor-pointer">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                    <p class="text-sm text-gray-500">
+                                        <span class="font-semibold">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p class="text-xs text-gray-500">TXT, PDF, DOCX, or other text files</p>
+                                </div>
+                                <input id="fileInput" type="file" class="hidden" accept=".txt,.pdf,.docx,.doc,.rtf" />
+                            </label>
+                        </div>
+                        <p id="fileName" class="mt-2 text-sm text-gray-500"></p>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <button id="analyzeBtn" class="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md transition-all duration-200">
+                            <i class="fas fa-search-plus mr-2"></i>Analyze Text
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="loadingSpinner" class="loading-spinner"></div>
+            
+            <div id="resultCard" class="result-card bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis Result</h2>
+                
+                <div class="flex items-center mb-4">
+                    <div id="resultIcon" class="text-3xl mr-3"></div>
+                    <div>
+                        <h3 id="resultTitle" class="text-lg font-bold"></h3>
+                        <p id="resultConfidence" class="text-sm text-gray-600"></p>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                        <span>Human</span>
+                        <span>AI</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressFill" class=""></div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-gray-50 rounded-md">
+                    <h4 class="text-sm font-medium text-gray-700 mb-2">Text Preview:</h4>
+                    <p id="textPreview" class="text-sm text-gray-800 italic"></p>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>© 2023 AI Text Detector | Built with advanced ML models</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            const fileInput = document.getElementById('fileInput');
+            const fileName = document.getElementById('fileName');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultCard = document.getElementById('resultCard');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultConfidence = document.getElementById('resultConfidence');
+            const progressFill = document.getElementById('progressFill');
+            const textPreview = document.getElementById('textPreview');
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function(e) {
+                if (fileInput.files.length > 0) {
+                    fileName.textContent = 'Selected file: ' + fileInput.files[0].name;
+                    textInput.value = ''; // Clear textarea when file is selected
+                }
+            });
+            
+            // Handle drag and drop
+            const dropArea = fileInput.parentElement;
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('border-blue-400', 'bg-blue-50');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('border-blue-400', 'bg-blue-50');
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    fileName.textContent = 'Selected file: ' + files[0].name;
+                    textInput.value = ''; // Clear textarea when file is dropped
+                }
+            }
+            
+            // Handle text input
+            textInput.addEventListener('input', function() {
+                if (textInput.value.trim() !== '') {
+                    fileInput.value = ''; // Clear file input when text is entered
+                    fileName.textContent = '';
+                }
+            });
+            
+            // Handle analysis button click
+            analyzeBtn.addEventListener('click', function() {
+                // Validate input
+                if (textInput.value.trim() === '' && (!fileInput.files || fileInput.files.length === 0)) {
+                    alert('Please enter text or upload a file to analyze.');
+                    return;
+                }
+                
+                // Show loading spinner
+                loadingSpinner.style.display = 'block';
+                resultCard.style.display = 'none';
+                
+                // Create form data
+                const formData = new FormData();
+                
+                if (textInput.value.trim() !== '') {
+                    formData.append('text', textInput.value);
+                } else if (fileInput.files && fileInput.files.length > 0) {
+                    formData.append('file', fileInput.files[0]);
+                }
+                
+                // Send request to server
+                fetch('/classify', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading spinner
+                    loadingSpinner.style.display = 'none';
+                    
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
+                    
+                    // Update result card
+                    const result = data.result;
+                    const confidence = data.confidence;
+                    
+                    if (result === 'Human') {
+                        resultIcon.innerHTML = '<i class="fas fa-user text-green-500"></i>';
+                        resultCard.classList.add('human-result');
+                        resultCard.classList.remove('ai-result');
+                        progressFill.className = 'progress-fill-human';
+                        progressFill.style.width = confidence + '%';
+                    } else {
+                        resultIcon.innerHTML = '<i class="fas fa-robot text-red-500"></i>';
+                        resultCard.classList.add('ai-result');
+                        resultCard.classList.remove('human-result');
+                        progressFill.className = 'progress-fill-ai';
+                        progressFill.style.width = (100 - confidence) + '%';
+                    }
+                    
+                    resultTitle.textContent = result + ' Generated Text';
+                    resultConfidence.textContent = 'Confidence: ' + confidence + '%';
+                    textPreview.textContent = data.text_preview;
+                    
+                    // Show result card with animation
+                    resultCard.style.display = 'block';
+                    resultCard.style.opacity = '0';
+                    resultCard.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        resultCard.style.opacity = '1';
+                        resultCard.style.transform = 'translateY(0)';
+                    }, 10);
+                })
+                .catch(error => {
+                    loadingSpinner.style.display = 'none';
+                    alert('Error: ' + error.message);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
