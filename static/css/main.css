@@ -1,0 +1,491 @@
+/* Custom animations and styling for AI Text Detector */
+
+/* Glowing effect for result card */
+.box {
+    transition: all 0.3s ease;
+}
+
+.box.is-human-result {
+    box-shadow: 0 0 15px rgba(0, 209, 178, 0.3);
+    border-left: 5px solid #00d1b2;
+}
+
+.box.is-ai-result {
+    box-shadow: 0 0 15px rgba(241, 70, 104, 0.3);
+    border-left: 5px solid #f14668;
+}
+
+/* Animated background gradient */
+.hero.is-primary {
+    background: linear-gradient(-45deg, #4a00e0, #8e2de2, #3273dc, #00d1b2);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Floating animation for icons */
+.result-icon i {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Fancy input focus effects */
+.textarea:focus {
+    box-shadow: 0 0 0 0.125em rgba(74, 0, 224, 0.25);
+    border-color: #4a00e0;
+}
+
+/* Typing indicator animation */
+.typing-indicator {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 30px;
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4a00e0;
+    margin: 0 3px;
+    animation: typing 1.5s infinite;
+    opacity: 0.6;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Pulse animation for analyze button */
+.button.is-primary.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(74, 0, 224, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(74, 0, 224, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(74, 0, 224, 0);
+    }
+}
+
+/* File upload area enhancements */
+.file-drop-area {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.file-drop-area.is-dragover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: #4a00e0;
+    background-color: rgba(74, 0, 224, 0.05);
+}
+
+/* Confidence meter animations */
+.progress-human, .progress-ai {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-human::after, .progress-ai::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Nav enhancements */
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-item {
+    transition: background-color 0.3s ease;
+}
+
+.navbar-brand .navbar-item:hover {
+    background-color: transparent !important;
+}
+
+/* Tab enhancements */
+.tabs li {
+    transition: all 0.3s ease;
+}
+
+.tabs li.is-active {
+    transform: translateY(-2px);
+}
+
+.tabs li:not(.is-active):hover {
+    transform: translateY(-1px);
+}
+
+/* Example buttons enhancements */
+.example-button {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.example-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design enhancements */
+@media screen and (max-width: 768px) {
+    .hero-body {
+        padding: 2rem 1rem;
+    }
+    
+    .title.is-2 {
+        font-size: 1.75rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .tabs li a {
+        padding: 0.5rem;
+    }
+    
+    .result-icon {
+        font-size: 2.5rem;
+    }
+    
+    .title.is-3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #363636;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #363636 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* History feature styles */
+.history-badge {
+    font-size: 0.7rem;
+    vertical-align: middle;
+    animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+    0% {
+        box-shadow: 0 0 0 0 rgba(74, 0, 224, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 5px rgba(74, 0, 224, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 0, 224, 0);
+    }
+}
+
+.history-item {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.history-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.history-item .text-preview {
+    max-height: 80px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover .text-preview {
+    max-height: 120px;
+}
+
+.history-item .delete-item {
+    opacity: 0.4;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover .delete-item {
+    opacity: 1;
+}
+
+.empty-history {
+    transition: all 0.5s ease;
+}
+
+.empty-history .icon i {
+    transition: all 0.5s ease;
+}
+
+.empty-history:hover .icon i {
+    transform: scale(1.1);
+    color: #b5b5b5;
+}
+
+.history-list {
+    min-height: 200px;
+}
+
+/* Animation for new history items */
+@keyframes highlightNew {
+    0% {
+        background-color: rgba(74, 0, 224, 0.1);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.history-item.new-item {
+    animation: highlightNew 2s ease;
+}
+
+/* Styling for history tab */
+#input-tabs li[data-tab="history"] {
+    position: relative;
+}
+
+/* Enhance empty state */
+.empty-history {
+    padding: 2rem 0;
+}
+
+/* Clear history button enhancements */
+#clearHistoryBtn {
+    transition: all 0.3s ease;
+}
+
+#clearHistoryBtn:hover {
+    background-color: rgba(241, 70, 104, 0.2);
+}
+
+/* History item action buttons */
+.history-item .button.restore-text {
+    transition: all 0.3s ease;
+    background: linear-gradient(90deg, #4a00e0, #8e2de2);
+    color: white;
+    border: none;
+}
+
+.history-item .button.restore-text:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(74, 0, 224, 0.3);
+}
+
+/* History item accordion for text preview */
+.history-item .text-preview {
+    position: relative;
+}
+
+.history-item .text-preview::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(rgba(229, 229, 229, 0), rgba(229, 229, 229, 1));
+    border-radius: 0 0 4px 4px;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Engineer profile styles */
+#engineer-section {
+    transition: all 0.5s ease;
+}
+
+#engineer-section img {
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s ease;
+    display: block;
+}
+
+#engineer-section img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+#engineer-section .content {
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#engineer-section .buttons .button {
+    transition: all 0.3s ease;
+}
+
+#engineer-section .buttons .button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Engineer callout section on homepage */
+.section.has-background-light {
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8) !important;
+}
+
+.section.has-background-light .box {
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border-top: 5px solid #4a00e0;
+    transition: all 0.5s ease;
+}
+
+.section.has-background-light .box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.section.has-background-light .icon.is-large {
+    height: 5rem;
+    width: 5rem;
+    background: rgba(74, 0, 224, 0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.5s ease;
+}
+
+.section.has-background-light .box:hover .icon.is-large {
+    transform: scale(1.1) rotate(10deg);
+    background: rgba(74, 0, 224, 0.1);
+}
+
+.section.has-background-light .button {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.section.has-background-light .button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(74, 0, 224, 0.2);
+}
+
+.section.has-background-light .button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        rgba(255, 255, 255, 0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+}
+
+.section.has-background-light .button:hover::after {
+    transform: translateX(100%);
+} 
